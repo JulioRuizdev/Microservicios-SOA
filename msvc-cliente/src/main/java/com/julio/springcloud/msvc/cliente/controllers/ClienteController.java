@@ -28,7 +28,7 @@ public class ClienteController {
     }
 
     // Crear o actualizar un usuario
-    @PostMapping
+    @PostMapping("/crear")
     public Cliente saveClient(@RequestBody Cliente cliente) {
         return cliService.save(cliente);
     }
@@ -45,5 +45,20 @@ public class ClienteController {
     public ResponseEntity<Cliente> getClientByEmail(@RequestParam String email) {
         Optional<Cliente> cliente = cliService.findByEmail(email);
         return cliente.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    // para actualizar
+    @PutMapping("/actualizar/{id}")
+    public ResponseEntity<Cliente> updateClient(@PathVariable Long id, @RequestBody Cliente cliente) {
+        Optional<Cliente> existingCliente = cliService.findById(id);
+        if (existingCliente.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        // Asegúrate de que el ID del path coincida con el ID en el cuerpo
+        cliente.setId(id);
+
+        Cliente updatedCliente = cliService.save(cliente);
+        return ResponseEntity.ok(updatedCliente);
     }
 }

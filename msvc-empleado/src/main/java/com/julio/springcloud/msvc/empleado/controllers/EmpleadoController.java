@@ -36,7 +36,7 @@ public class EmpleadoController {
     }
 
     // Crear o actualizar un usuario
-    @PostMapping
+    @PostMapping("/crear")
     public Empleado saveClient(@RequestBody Empleado empleado) {
         return empService.save(empleado);
     }
@@ -53,5 +53,10 @@ public class EmpleadoController {
     public ResponseEntity<Empleado> getClientByEmail(@RequestParam String email) {
         Optional<Empleado> empleado = empService.findByEmail(email);
         return empleado.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/test")
+    public String test() {
+        return "El controlador está funcionando";
     }
 }
