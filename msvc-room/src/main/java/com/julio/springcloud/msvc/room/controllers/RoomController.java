@@ -1,9 +1,10 @@
 package com.julio.springcloud.msvc.room.controllers;
 
-import org.apache.hc.client5.http.auth.KerberosConfig.Option;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -17,6 +18,8 @@ import jakarta.validation.Valid;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @RestController
 @RequestMapping("/api/rooms")
@@ -29,6 +32,19 @@ public class RoomController {
     @GetMapping
     public List<Room> getAllRooms() {
         return roomService.findAll();
+    }
+
+    @GetMapping("/uploads/img/{id}")
+    public ResponseEntity<?> viewPhoto(@PathVariable Long id) {
+        Optional<Room> o = roomService.findById(id);
+
+        if (o.isEmpty() || o.get().getFoto() == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        Resource image = new ByteArrayResource(o.get().getFoto());
+
+        return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(image);
     }
 
     // Obtener una habitación por ID
